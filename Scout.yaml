@@ -1,0 +1,29 @@
+name: Scout
+ 
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+ 
+jobs:
+  build:
+    runs-on: [self-hosted, windows]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+ 
+      - name: Run TOSCA Test
+        run: >
+          C:\TFS_Datascience_Scout\ToscaCI\Client\ToscaCIClient.exe
+          -m distributed
+          -c "C:\TFS_Datascience_Scout\ToscaCI\Client\Scout.xml"
+          -r "C:\TFS_Datascience_Scout\Automation\Result.xml"
+ 
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unit Test Results
+          path: C:\TFS_Datascience_Scout\Automation\Result.xml
